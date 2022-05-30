@@ -1,0 +1,40 @@
+{
+    "ownerId": "755473025209466950",
+    "bot": {
+        "presence": {
+            "status": "online",
+            "type": "PRESENCE_TYPE",
+            "name": "PRESENCE_NAME"
+        },
+        "categories": {
+            "CATEGORY_ID": "CATEGORY_NAME"
+        },
+        "emojis": {
+            "coins": "EMOJI_ID"
+        },
+        "links": {
+            "LINK": "URL"
+        },
+        "support_server": {
+            "id": "SUPPORT_SERVER_ID",
+            "invite": "SUPPORT_SERVER_INVITE_LINK",
+            "channels": {
+                "bot_errors": "SUPPORT_SERVER_BOT_ERRORS_CHANNEL",
+                "user_votes": "SUPPORT_SERVER_VOTE_CHANNEL"
+            }
+        },
+        "embed": {
+            "colors": {
+                "accent": "ACCENT_COLOR"
+            },
+            "thumbnails": {
+            },
+            "images": {
+            }
+        }
+    },
+    "server": {
+        "port": "SERVER_PORT",
+        "token": "SERVER_TOKEN"
+    }
+}

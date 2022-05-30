@@ -1,0 +1,22 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "This repository contains the code for the Discord bot",
+  "main": "app.js",
+  "scripts": {
+    "development": "SET NODE_ENVIRONMENT=development& node app.js",
+    "production": "SET NODE_ENVIRONMENT=production& node app.js"
+  },
+  "author": "goodbyepavlyi",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.2",
+    "discord.js": "^13.7.0",
+    "express": "^4.18.1",
+    "express-useragent": "^1.0.15",
+    "quick.db": "^9.0.2",
+    "statcord.js": "^3.4.2",
+    "topgg-autoposter": "^2.0.1"
+  }
+}
