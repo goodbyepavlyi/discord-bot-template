@@ -1,7 +1,7 @@
 /*
     *IMPORTING NODE CLASSES
 */
-const { MessageEmbed, MessageButton, MessageActionRow } = require('discord.js');
+const { MessageEmbed, MessageButton, MessageActionRow, ButtonInteraction, Client, User, GuildMember, Guild, Channel } = require('discord.js');
 
 /*
     *IMPORTING FILES
@@ -14,6 +14,14 @@ const { getColor } = require('../classes/Embed');
 module.exports = {
     id: 'accept_rules',
 
+    /**
+     * @param {ButtonInteraction} interaction 
+     * @param {Client} client 
+     * @param {User} user 
+     * @param {GuildMember} guildMember 
+     * @param {Guild} guild 
+     * @param {Channel} channel 
+     */
     async execute(interaction, client, user, guildMember, guild, channel) {
         let agreedToRules = await hasAgreedToRules(user.id);
         if (agreedToRules) {
