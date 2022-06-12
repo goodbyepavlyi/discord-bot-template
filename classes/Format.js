@@ -5,21 +5,33 @@ const ms = require('ms');
 const formatMilliseconds = require('pretty-ms');
 const formatSeconds = require('pretty-seconds');
 
+/**
+ * @param {number} duration 
+ */
 function milliseconds(duration) {
     if (!duration) return;
     return formatMilliseconds(duration, { verbose: true, secondsDecimalDigits: 0})
 }
 
+/**
+ * @param {number} duration 
+ */
 function seconds(duration) {
     if (!duration) return;
     return formatSeconds(duration);
 }
 
+/**
+ * @param {number} duration 
+ */
 function stringToUnix(duration) {
     if (!duration) return;
     return ms(duration);
 }
 
+/**
+ * @param {number} bytes
+ */
 function bytesToMegabytes(bytes) {
     if (!bytes) return;
     if (bytes === 0) return '0MB';
@@ -27,6 +39,9 @@ function bytesToMegabytes(bytes) {
     return `${(bytes / (1024 * 1024)).toFixed(0)}MB`
 }
 
+/**
+ * @param {number} number
+ */
 function numberToShort(number) {
     if (!number) return;
     if(number > 999 && number < 1000000) return (number/1000).toFixed(0) + 'K';

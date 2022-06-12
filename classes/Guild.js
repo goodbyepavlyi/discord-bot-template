@@ -1,8 +1,12 @@
 /*
     *IMPORTING NODE CLASSES
 */
+const { Snowflake } = require('discord.js');
 const db = require('quick.db');
 
+/**
+ * @param {Snowflake} guildId 
+ */
 async function createGuild(guildId) {
     try {
         if (!guildId) return;
@@ -19,7 +23,10 @@ async function createGuild(guildId) {
     }
 }
 
-async function getGuild(guildId) {
+/**
+ * @param {Snowflake} guildId 
+ */
+ async function getGuild(guildId) {
     try {
         if (!guildId) return;
 
@@ -30,6 +37,10 @@ async function getGuild(guildId) {
     }
 }
 
+/**
+ * @param {Snowflake} guildId 
+ * @param {object} data
+ */
 async function saveData(guildId, data) {
     try {
         if (!(guildId || data)) return;
@@ -40,6 +51,10 @@ async function saveData(guildId, data) {
     }
 }
 
+/**
+ * @param {Snowflake} guildId 
+ * @param {string} channelType 
+ */
 async function getChannel(guildId, channelType) {
     try {
         if (!(guildId || channelType)) return;
@@ -53,6 +68,11 @@ async function getChannel(guildId, channelType) {
     }
 }
 
+/**
+ * @param {Snowflake} guildId 
+ * @param {string} channelType 
+ * @param {Snowflake} channelId 
+ */
 async function setChannel(guildId, channelType, channelId) {
     try {
         if (!(guildId || channelType || channelId)) return;

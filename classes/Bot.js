@@ -1,21 +1,28 @@
 /*
     *IMPORTING NODE CLASSES
 */
-const fetch = require('cross-fetch')
+const { Snowflake } = require('discord.js');
+const fetch = require('cross-fetch');
 
+/**
+ * @param {Snowflake} id 
+ */
 function getIdFromString(id) {
-    if (!id) return
+    if (!id) return;
 
-    let userId = id.replace(/\D/g, '')
-    return userId
+    let userId = id.replace(/\D/g, '');
+    return userId;
 }
 
+/**
+ * @param {string} url 
+ */
 async function request(url) {
     try {
-        if (!url) return
+        if (!url) return;
 
-        let request = await fetch(url)
-        let response = await request.json().catch(() => { return {} })
+        let request = await fetch(url);
+        let response = await request.json().catch(() => { return {} });
 
         return response;
     } catch(error) {

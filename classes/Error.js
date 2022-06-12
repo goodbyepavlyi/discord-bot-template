@@ -17,7 +17,7 @@ const { getColor } = require('../classes/Embed');
  * @param {string} actionName
  * @param {Guild} guild 
  * @param {boolean} reportError 
- * @returns 
+ * @returns {MessageEmbed} Returns the error response
  */
 async function createErrorEmbed(client, user, error, action, actionName, guild, reportError = true) {
     let errorId = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);

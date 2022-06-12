@@ -1,14 +1,18 @@
 /*
     *IMPORTING NODE CLASSES
 */
+const { Snowflake } = require('discord.js');
 const db = require('quick.db');
 
-async function createUser(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function createUser(userId) {
     try {
-        if (!id) return;
+        if (!userId) return;
 
-        db.set(`user_${id}`, {
-            id,
+        db.set(`user_${userId}`, {
+            id: userId,
             agreedToRules: false,
             balance: 0,
             timeouts: {},
@@ -20,38 +24,48 @@ async function createUser(id) {
             },
         });
 
-        let user = await db.get(`user_${id}`);
+        let user = await db.get(`user_${userId}`);
         return user;
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function getUser(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function getUser(userId) {
     try {
-        if (!id) return;
+        if (!userId) return;
 
-        let user = await db.get(`user_${id}`) || await createUser(id);
+        let user = await db.get(`user_${userId}`) || await createUser(userId);
         return user;
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function saveData(id, data) {
+/**
+ * @param {Snowflake} userId 
+ * @param {object} data 
+ */
+async function saveData(userId, data) {
     try {
-        if (!(id || data)) return;
+        if (!(userId || data)) return;
         
-        await db.set(`user_${id}`, data);
+        await db.set(`user_${userId}`, data);
         return;
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function hasAgreedToRules(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function hasAgreedToRules(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         return data.agreedToRules;
@@ -60,21 +74,27 @@ async function hasAgreedToRules(id) {
     }
 }
 
-async function agreeToRules(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function agreeToRules(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         data.agreedToRules = true;
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function getBalance(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function getBalance(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         return data.balance;
@@ -83,53 +103,69 @@ async function getBalance(id) {
     }
 }
 
-async function addBalance(id, balance) {
+/**
+ * @param {Snowflake} userId 
+ * @param {number} balance
+ */
+async function addBalance(userId, balance) {
     try {
         if (isNaN(balance)) return;
 
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         data.balance = Math.abs(data.balance + Number(balance));
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function removeBalance(id, balance) {
+/**
+ * @param {Snowflake} userId 
+ * @param {number} balance
+ */
+async function removeBalance(userId, balance) {
     try {
         if (isNaN(balance)) return;
 
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         data.balance = Math.abs(data.balance - Number(balance));
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function setBalance(id, balance) {
+/**
+ * @param {Snowflake} userId 
+ * @param {number} balance
+ */
+async function setBalance(userId, balance) {
     try {
         if (isNaN(balance)) return;
 
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         data.balance = Math.abs(Number(balance));
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function getTimeout(id, name) {
+/**
+ * @param {Snowflake} userId 
+ * @param {string} name
+ */
+async function getTimeout(userId, name) {
     try {
         if (!name) return;
 
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data || !data.timeouts) return;
 
         return data.timeouts[name];
@@ -138,23 +174,31 @@ async function getTimeout(id, name) {
     }
 }
 
-async function setTimeout(id, name, time) {
+/**
+ * @param {Snowflake} userId 
+ * @param {string} name
+ * @param {number} time
+ */
+async function setTimeout(userId, name, time) {
     try {
         if (!(name || time)) return;
 
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data || !data.timeouts) return;
 
         data.timeouts[name] = time;
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function getVoteReminder(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function getVoteReminder(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         return data.votes.remind;
@@ -163,21 +207,28 @@ async function getVoteReminder(id) {
     }
 }
 
-async function setVoteReminder(id, state) {
+/**
+ * @param {Snowflake} userId 
+ * @param {boolean} state
+ */
+async function setVoteReminder(userId, state) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         data.votes.remind = state;
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
 }
 
-async function getTotalVotes(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function getTotalVotes(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         return data.votes.times.length;
@@ -186,9 +237,12 @@ async function getTotalVotes(id) {
     }
 }
 
-async function getVoteStreak(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function getVoteStreak(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         //? Getting Date and removing 2 days from it
@@ -197,7 +251,7 @@ async function getVoteStreak(id) {
 
         if (lastTime <= timeNow) {
             data.votes.streak = 0;
-            saveData(id, data);
+            saveData(userId, data);
             
             return 0;
         }
@@ -208,9 +262,12 @@ async function getVoteStreak(id) {
     }
 }
 
-async function hasVoted(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function hasVoted(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         //? Getting Date and removing 1 day from it
@@ -223,9 +280,12 @@ async function hasVoted(id) {
     }
 }
 
-async function vote(id) {
+/**
+ * @param {Snowflake} userId 
+ */
+async function vote(userId) {
     try {
-        let data = await getUser(id);
+        let data = await getUser(userId);
         if (!data) return;
 
         data.votes.time.push(Math.round(Date.now() / 1000));
@@ -233,7 +293,7 @@ async function vote(id) {
         data.streak++;
         data.reminded = false;
 
-        return saveData(id, data);
+        return saveData(userId, data);
     } catch (error) {
         throw Error(error);
     }
