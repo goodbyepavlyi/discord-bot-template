@@ -2,7 +2,6 @@
     *IMPORTING NODE CLASSES
 */
 const { AutoPoster } = require('topgg-autoposter')
-const { Client } = require('statcord.js');
 
 /*
     *IMPORTING FILES
@@ -34,20 +33,12 @@ module.exports = {
         apiServer.launch(config.server.port, client)
 
         /*
-            *POSTING BOT STATISTICS TO TOP.GG AND STATCORD.COM
+            *POSTING BOT STATISTICS TO TOP.GG
         */
         if (process.env.NODE_ENVIRONMENT === 'production') {
-            const topGG = AutoPoster(tokens[process.env.NODE_ENVIRONMENT].top_gg.api, client);
-            try { topGG.on('posted', () => console.log('Top.GG', 'Posted bot statistics!')); }
+            const topgg = AutoPoster(tokens[process.env.NODE_ENVIRONMENT].top_gg.api, client);
+            try { topgg.on('posted', () => console.log('Top.GG', 'Posted bot statistics!')); }
             catch (error) { console.log('Top.GG', `Failed to post bot statistics! ${error.message}`); }
-
-            const statcord = new Client({ client, key: tokens[process.env.NODE_ENVIRONMENT].statcord_api });
-            statcord.autopost();
-            statcord.on('post', error => {
-                if (error) return console.log('Statcord.com', `Failed to post bot statistics! ${error}`);
-
-                console.log('Statcord.com', 'Posted bot statistics!')
-            });
         }
 
         console.log('Discord', 'Successfully connected to Discord API!');
