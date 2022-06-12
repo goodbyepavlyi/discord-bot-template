@@ -37,7 +37,7 @@ module.exports = client;
 /*
     *SEPARATE THE ACTIONS IN THE LOG
 */
-console.log('--------------------------------');
+console.log('', '');
 
 /*
     *READING AND IMPORTING EVENT LISTENERS
@@ -49,13 +49,13 @@ for (let file of eventFiles) {
     if (event.once) client.once(event.name, (...args) => event.execute(...args));
     else client.on(event.name, (...args) => event.execute(...args));
 
-    console.log(`[Event] Event ${event.name} loaded`);
+    console.log('Event', `${event.name} loaded`);
 };
 
 /*
     *SEPARATE THE ACTIONS IN THE LOG
 */
-console.log('--------------------------------');
+console.log('', '');
 
 /*
     *READING AND IMPORTING COMMANDS
@@ -65,12 +65,12 @@ for (let file of fs.readdirSync('./commands').filter(file => (path.extname(file)
     let command = require(`./commands/${file}`);
     client.commands.set(command.data.name, command);
 
-    console.log(`[Command] Command ${command.data.name} loaded`);
+    console.log('Command', `${command.data.name} loaded`);
 }
 /*
     *SEPARATE THE ACTIONS IN THE LOG
 */
-console.log('--------------------------------');
+console.log('', '');
 
 /*
     *READING AND IMPORTING BUTTONS
@@ -81,13 +81,13 @@ for (let file of buttonFiles) {
     let button = require(`./buttons/${file}`);
     client.interactionButtons.set(button.id, button);
 
-    console.log(`[Button] Button ${button.id} loaded`);
+    console.log('Button', `${button.id} loaded`);
 };
 
 /*
     *SEPARATE THE ACTIONS IN THE LOG
 */
-console.log('--------------------------------');
+console.log('', '');
 
 client.login(tokens[process.env.NODE_ENVIRONMENT].discord.token);
 

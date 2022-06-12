@@ -47,7 +47,7 @@ app.use((req, res, next) => {
     let date = new Date().toUTCString() || '-';
     let url = originalUrl || link || '-';
 
-    console.apiLog(`${ip} - [${date}] "${method} ${url} HTTP/${httpVersion}" ${statusCode} "${referrer}" "${useragent}"`);
+    console.log('API', `${ip} - [${date}] "${method} ${url} HTTP/${httpVersion}" ${statusCode} "${referrer}" "${useragent}"`);
     next();
 });
 
@@ -57,7 +57,7 @@ app.use((req, res, next) => {
  */
 function launch(port) {
     app.listen(port, () => {
-        console.apiLog(`Listening on port ${port}!`);
+        console.log('API', `Listening on port ${port}!`);
     });
 }
 

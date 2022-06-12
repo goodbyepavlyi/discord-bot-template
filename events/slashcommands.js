@@ -129,7 +129,7 @@ module.exports = {
             /*
                 *COMMAND EXECUTION
             */
-            console.log(`[User Action] '${user.tag}' (${user.id}) used command '${commandName}' in '${guild.name}' (${guild.id})`);
+            console.log('User Action', `'${user.tag}' (${user.id}) used command '${commandName}' in '${guild.name}' (${guild.id})`);
             return await command.execute(client, interaction, user, guildMember, guild, channel);
         } catch (error) {
             let errorResult = await reportError(client, user, error, 'Command', commandName, guild);

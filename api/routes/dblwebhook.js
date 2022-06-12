@@ -29,7 +29,7 @@ router.post('/dblwebhook', webhook.listener(async res => {
         let total = (await getTotalVotes(userId)).toString() || '0';
         let streak = (await getVoteStreak(userId)).toString() || '0';
 
-        console.log(`[Votes] ${user.tag} (${user.id}) voted at ${dayjs().format('HH:mm:ss')}!`);
+        console.log('Votes', `${user.tag} (${user.id}) voted at ${dayjs().format('HH:mm:ss')}!`);
         let userEmbed = new MessageEmbed()
             .setColor(getColor('accent'))
             .setTitle(messages.VOTE_RECEIVED_USER_TITLE)
@@ -59,7 +59,7 @@ router.post('/dblwebhook', webhook.listener(async res => {
         return channel.send({ embeds: [guildEmbed] });
     }).catch((error) => {
         if (error.message != 'Unknown User') return console.error(error);
-        return console.log(`[Votes] ${userId} voted at ${dayjs().format('HH:mm:ss')}!`);
+        return console.log('Votes', `${userId} voted at ${dayjs().format('HH:mm:ss')}!`);
     });
 }));
 

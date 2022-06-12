@@ -3,35 +3,30 @@
 */
 const fs = require('fs');
 const util = require('util');
+var colors = require('colors');
 const dayjs = require('dayjs');
 
 async function logToFile(directory) {
     if (!fs.existsSync(directory)) fs.mkdirSync(directory);
 
-    let logStdout = process.stdout;
+    let stdout = process.stdout;
 
-    console.log = function () {
-        let file = `logs/${dayjs().format('DD-MM-YYYY')}_out.log`;
-        let logFile = fs.createWriteStream(file, { flags: 'a' });
+    console.log = function (type, message) {
+        const fileName = `logs/${dayjs().format('DD-MM-YYYY')}_out.log`;
+        const file = fs.createWriteStream(fileName, { flags: 'a' });
+        const time = dayjs().format('HH:mm:ss');
 
-        logFile.write(`[${dayjs().format('HH:mm:ss')}] ${util.format.apply(null, arguments)} \n`);
-        logStdout.write(`[${dayjs().format('HH:mm:ss')}] ${util.format.apply(null, arguments)} \n`);
-    }
-
-    console.apiLog = function () {
-        let file = `logs/${dayjs().format('DD-MM-YYYY')}_api_out.log`;
-        let logFile = fs.createWriteStream(file, { flags: 'a' });
-
-        logFile.write(`[${dayjs().format('HH:mm:ss')}] ${util.format.apply(null, arguments)} \n`);
-        logStdout.write(`[${dayjs().format('HH:mm:ss')}] [API] ${util.format.apply(null, arguments)} \n`);
+        file.write(`${time} ${type || 'None'} ${message} \n`);
+        stdout.write(`${time.bgGray.brightWhite} ${type.bgMagenta || 'None'.bgMagenta} ${message} \n`);
     }
 
     console.error = function () {
-        let file = `logs/${dayjs().format('DD-MM-YYYY')}_error.log`;
-        let logFile = fs.createWriteStream(file, { flags: 'a' });
+        const fileName = `logs/${dayjs().format('DD-MM-YYYY')}_error.log`;
+        const file = fs.createWriteStream(fileName, { flags: 'a' });
+        const time = dayjs().format('HH:mm:ss');
 
-        logFile.write(`[${dayjs().format('HH:mm:ss')}] ${util.format.apply(null, arguments)} \n`);
-        logStdout.write(`[${dayjs().format('HH:mm:ss')}] [Error] ${util.format.apply(null, arguments)} \n`);
+        file.write(`${time} Error ${util.format.apply(null, arguments)} \n`);
+        stdout.write(`${time.bgBrightRed.brightWhite} ${'Error'.bgRed} ${util.format.apply(null, arguments)} \n`);
     }
 }
 

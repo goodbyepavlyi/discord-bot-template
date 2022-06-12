@@ -38,24 +38,24 @@ module.exports = {
         */
         if (process.env.NODE_ENVIRONMENT === 'production') {
             const topGG = AutoPoster(tokens[process.env.NODE_ENVIRONMENT].top_gg.api, client);
-            try { topGG.on('posted', () => console.log('[Top.GG] Posted bot statistics!')); }
-            catch (error) { console.log(`[Top.GG] Failed to post bot statistics! ${error.message}`); }
+            try { topGG.on('posted', () => console.log('Top.GG', 'Posted bot statistics!')); }
+            catch (error) { console.log('Top.GG', `Failed to post bot statistics! ${error.message}`); }
 
             const statcord = new Client({ client, key: tokens[process.env.NODE_ENVIRONMENT].statcord_api });
             statcord.autopost();
             statcord.on('post', error => {
-                if (error) return console.log(`[Statcord.com] Failed to post bot statistics! ${error}`);
+                if (error) return console.log('Statcord.com', `Failed to post bot statistics! ${error}`);
 
-                console.log('[Statcord.com] Posted bot statistics!')
+                console.log('Statcord.com', 'Posted bot statistics!')
             });
         }
 
-        console.log('[Client] Successfully connected to Discord API!');
-        console.log(`[Client] Information - ID: ${client.user.id}, Name: ${client.user.tag}`);
+        console.log('Discord', 'Successfully connected to Discord API!');
+        console.log('Discord', `Information - ID: ${client.user.id}, Name: ${client.user.tag}`);
 
         /*
             *SEPARATE THE ACTIONS IN THE LOG
         */
-        console.log('--------------------------------');
+        console.log('', '');
     },
 };
