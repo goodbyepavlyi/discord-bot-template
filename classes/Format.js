@@ -2,16 +2,7 @@
     *IMPORTING NODE CLASSES
 */
 const ms = require('ms');
-const formatMilliseconds = require('pretty-ms');
 const formatSeconds = require('pretty-seconds');
-
-/**
- * @param {number} duration 
- */
-function milliseconds(duration) {
-    if (!duration) return;
-    return formatMilliseconds(duration, { verbose: true, secondsDecimalDigits: 0})
-}
 
 /**
  * @param {number} duration 
@@ -51,7 +42,6 @@ function numberToShort(number) {
 }
 
 module.exports = {
-    milliseconds,
     seconds,
     stringToUnix,
     bytesToMegabytes,
