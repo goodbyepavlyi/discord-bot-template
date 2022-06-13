@@ -7,9 +7,9 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 	*IMPORTING FILES
 */
 const config = require('../config.json');
-const languages = require('../assets/languages.json');
-const works = require('../assets/jsons/work.json');
-const { set_timeout, get_timeout, add_balance } = require('../classes/User');
+const messages = require('../assets/messages');
+const works = require('../assets/work.json');
+const { setTimeout, getTimeout, addBalance } = require('../classes/User');
 const { milliseconds } = require('../classes/Format');
 
 let timeout = 1800000;
@@ -18,10 +18,6 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('work')
 		.setDescription('You can work on a job for a payout!'),
-
-	name: 'work',
-	description: 'You can work on a job for a payout!',
-	usage: '/work',
 
 	cooldown: 5,
 	id: 'economy',
@@ -33,24 +29,22 @@ module.exports = {
 	 * @param {GuildMember} guildMember
 	 * @param {Guild} guild
 	 * @param {TextChannel} channel
-	 * @param {String} language
 	*/
-	async execute(client, interaction, user, guildMember, guild, channel, language) {
-		let user_timeout = await get_timeout(user.id, 'work');
+	async execute(client, interaction, user, guildMember, guild, channel) {
+		let userTimeout = await getTimeout(user.id, 'work');
 
-		if (user_timeout && timeout - (Date.now() - user_timeout) > 0) {
-			let time = milliseconds(timeout - (Date.now() - user_timeout));
+		if (userTimeout && timeout - (Date.now() - userTimeout) > 0) {
+			let time = milliseconds(timeout - (Date.now() - userTimeout));
 
-			let content = languages[language].commands.work.already_worked.replaceAll('%1', time);
+			let content = messages.COMMANDS_WORK_ALREADY_WORKED.replaceAll('{time}', time);
 			return interaction.editReply({ content });
 		}
 
-		let amount = Math.floor(Math.random() * 120) + 1;
+		let reward = Math.floor(Math.random() * (150 - 100 + 1) + 100);
 		let work = works[Math.floor(Math.random() * works.length)];
-		await set_timeout(user.id, 'work');
-		await add_balance(user.id, amount);
+		await setTimeout(user.id, 'work', Date.now());
+		await addBalance(user.id, reward);
 
-		let content = `${work} ${config.bot.emojis.mora}${amount} mora.`;
-		return interaction.editReply({ content });
+		return interaction.editReply({ content: messages.COMMANDS_WORK_SUCCESS.replaceAll('{work}', work).replaceAll('{emoji}', config.bot.emojis.coins).replaceAll('{reward}', reward) });
 	}
 };

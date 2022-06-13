@@ -1,55 +1,51 @@
 /*
 	*IMPORTING NODE CLASSES
 */
+const { Client, CommandInteraction, User, GuildMember, Guild, Channel } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 /*
-*IMPORTING FILES
+	*IMPORTING FILES
 */
 const config = require('../config.json');
-const languages = require('../assets/languages.json');
-const { get_balance, get_timeout, add_balance, set_timeout } = require('../classes/User');
-const { milliseconds } = require('../classes/Format');
+const messages = require('../assets/messages');
+const { getBalance, getTimeout, addBalance, setTimeout } = require('../classes/User');
+const { seconds } = require('../classes/Format');
 
-let timeout = 86400000 * 7;
-let reward = 500;
+const timeout = 86400 * 7;
+const reward = 500;
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('weekly')
-		.setDescription('Get weekly mora.'),
-
-	name: 'weekly',
-	description: 'Get weekly mora.',
-	usage: '/weekly',
+		.setDescription('Get weekly coins.'),
 
 	cooldown: 3,
 	id: 'economy',
 
 	/**
 	 * @param {Client} client
-	 * @param {Interaction} interaction
+	 * @param {CommandInteraction} interaction
 	 * @param {User} user
 	 * @param {GuildMember} guildMember
 	 * @param {Guild} guild
-	 * @param {TextChannel} channel
-	 * @param {String} language
+	 * @param {Channel} channel
 	*/
-	async execute(client, interaction, user, guildMember, guild, channel, language) {
-		let user_timeout = await get_timeout(user.id, 'reward_weekly');
+	async execute(client, interaction, user, guildMember, guild, channel) {
+		const userTimeout = await getTimeout(user.id, 'reward_weekly');
+		const timeNow = Date.now() / 1000;
 
-		if (user_timeout && timeout - (Date.now() - user_timeout) > 0) {
-			let time = milliseconds(timeout - (Date.now() - user_timeout));
+		if (userTimeout && timeout - (timeNow - userTimeout) > 0) {
+			let time = seconds(timeout - (timeNow - userTimeout));
 
-			let content = languages[language].commands.weekly.already_claimed.replaceAll('%1', time);
+			let content = messages.COMMANDS_WEEKLY_ALREADY_CLAIMED.replaceAll('{time}', time);
 			return interaction.editReply({ content });
 		}
 
-		await set_timeout(user.id, 'reward_weekly');
-		await add_balance(user.id, reward);
+		await setTimeout(user.id, 'reward_weekly', timeNow);
+		await addBalance(user.id, reward);
 
-		let balance = await get_balance(user.id);
-		let content = languages[language].commands.weekly.claimed.replaceAll('%1', `${config.bot.emojis.mora}${reward}`).replaceAll('%2', `${config.bot.emojis.mora}${balance}`);
-		return interaction.editReply({ content });
+		let balance = await getBalance(user.id);
+		return interaction.editReply({ content: messages.COMMANDS_WEEKLY_CLAIMED.replaceAll('{emoji}', config.bot.emojis.coins).replaceAll('{reward}', reward).replaceAll('{balance}', balance) });
 	}
 };
