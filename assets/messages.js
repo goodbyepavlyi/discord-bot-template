@@ -2,7 +2,7 @@ module.exports = {
     DMS_NOT_ALLOWED_TITLE: "It seems like you're trying to do something that I still can't do",
     DMS_NOT_ALLOWED_DESCRIPTION: "There is no support for commands in DMs at the moment. To make use of this command, run it on a server.",
 
-    BOT_RULES_AUTHOR_NAME: "Froggie's Bot Rules",
+    BOT_RULES_AUTHOR_NAME: "BOTNAME's Bot Rules",
     BOT_RULES_TITLE: "In the event that you violate these rules, your account will be banned from using the bot.",
     BOT_RULES_DESCRIPTION: "• A user cannot take any action to gain an unfair advantage over other users.\n• Do not use any exploits and report any discovered within the bot!\n\nIf you have any questions come ask in the [support server]({supportServerLink})!",
     BOT_RULES_ACCEPT_BUTTON: "I accept the rules",

@@ -45,7 +45,7 @@ module.exports = {
                 name: messages.BOT_RULES_AUTHOR_NAME,
                 iconURL: client.user.displayAvatarURL()
             })
-            .setImage(config.bot.embed.images.froggie_background_zoomed)
+            .setImage(config.bot.embed.images.accept_rules)
             .setTitle(messages.BOT_RULES_ACCEPTED_TITLE)
             .setDescription(messages.BOT_RULES_ACCEPTED_DESCRIPTION.replaceAll('{supportServerLink}', config.bot.support_server.invite));
 

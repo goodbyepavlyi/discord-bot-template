@@ -28,7 +28,7 @@ module.exports = {
             let content = messages.PREFIX_REMINDER.replaceAll('{user}', `<@${user.id}>`).replaceAll('{prefix}', '/');
             return message.reply({ content });
         } catch (error) {
-            let errorResult = await reportError(client, user, error, 'Message Create', '@froggie', guild);
+            let errorResult = await reportError(client, user, error, 'Message Create', 'Mention', guild);
             return message.reply(errorResult);
 		}
     },

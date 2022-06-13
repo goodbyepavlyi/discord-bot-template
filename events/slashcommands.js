@@ -38,7 +38,7 @@ module.exports = {
         if (!guild) {
             let embed = new MessageEmbed()
                 .setColor(getColor('accent'))
-                .setImage(config.bot.embed.images.froggie_background_zoomed)
+                .setImage(config.bot.embed.images.accept_rules)
                 .setTitle(messages.DMS_NOT_ALLOWED_TITLE)
                 .setDescription(messages.DMS_NOT_ALLOWED_DESCRIPTION);
 
@@ -57,7 +57,7 @@ module.exports = {
                         name: messages.BOT_RULES_AUTHOR_NAME,
                         iconURL: client.user.displayAvatarURL()
                     })
-                    .setImage(config.bot.embed.images.froggie_background_zoomed)
+                    .setImage(config.bot.embed.images.accept_rules)
                     .setTitle(messages.BOT_RULES_TITLE)
                     .setDescription(messages.BOT_RULES_DESCRIPTION.replaceAll('{supportServerLink}', config.bot.support_server.invite));
 

@@ -3,7 +3,7 @@
 */
 const fs = require('fs');
 const util = require('util');
-var colors = require('colors');
+const colors = require('colors');
 const dayjs = require('dayjs');
 
 async function logToFile(directory) {

@@ -44,7 +44,7 @@ router.post('/dblwebhook', webhook.listener(async res => {
 
         let guildEmbed = new MessageEmbed()
             .setColor(getColor('accent'))
-            .setImage(config.bot.embed.images.froggie_background_zoomed)
+            .setImage(config.bot.embed.images.accept_rules)
             .setAuthor({
                 name: user.username,
                 iconURL: user.avatarURL(),
