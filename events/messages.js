@@ -1,35 +1,36 @@
-/*
-    *IMPORTING NODE CLASSES
-*/
-const { Permissions } = require('discord.js');
-
-/*
-    *IMPORTING FILES
-*/
-const messages = require('../assets/messages');
-const reportError = require('../classes/Error.js');
+const { Message } = require('discord.js');
+const reportError = require('../utils/errorReporting.js');
+const { log } = require('../utils/logger.js');
 
 module.exports = {
     name: 'messageCreate',
 
-    async execute(message) {
-        let { client, guild, channel, author: user, content } = message;
+    /**
+     * @param {Message} message 
+     */
+    async run(message) {
+        const { client, channel, author: user, content, partial } = message;
 
-        if (!guild) return;
         if (user.bot) return;
+        if (channel.partial) await message.channel.fetch();
+        if (partial) await message.fetch();
 
-        let mentioned = content.match(new RegExp(`^<@!?${client.user.id}>`));
-        if (!mentioned) return;
+        const prefixRegex = new RegExp(`^(${client.prefix}|<@!?${client.user.id}>)`);
+        const prefix = content.match(prefixRegex);
+        if (!prefix) return;
+
+        const args = content.replace(prefixRegex, '').trim().split(/ +/g);
+        const commandName = args.shift().toLowerCase() || `help`;
+
+        const command = client.interactions.command.find(command => command.name == commandName);
+        if (!command) return;
 
         try {
-            let canSendMessages = guild.me.permissionsIn(channel.id).has(Permissions.FLAGS.SEND_MESSAGES);
-            if (!canSendMessages) return;
-
-            let content = messages.PREFIX_REMINDER.replaceAll('{user}', `<@${user.id}>`).replaceAll('{prefix}', '/');
-            return message.reply({ content });
+            log('User Action', `'${user.tag}' (${user.id}) used command '${commandName}'`, `green`);
+            return await command.runMessage(message, args);
         } catch (error) {
-            let errorResult = await reportError(client, user, error, 'Message Create', 'Mention', guild);
-            return message.reply(errorResult);
-		}
+            const errorEmbed = await reportError(client, user, error, 'Message Command', commandName);
+            return message.reply({ embeds: [errorEmbed] });
+        }
     },
 };

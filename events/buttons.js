@@ -1,25 +1,24 @@
-/*
-    *IMPORTING FILES
-*/
-const reportError = require('../classes/Error.js');
+const reportError = require('../utils/errorReporting.js');
+const { log } = require('../utils/logger.js');
 
 module.exports = {
     name: 'interactionCreate',
     
-    async execute(interaction) {
+    async run(interaction) {
         if (!interaction.isButton()) return;
-        let { client, guild, channel, user, member: guildMember, customId: id } = interaction;
+        const { client, user, customId: id } = interaction;
         
         if (user.bot) return;
 
-        let button = client.interactionButtons.find(button => button.id == id);
+        const button = client.interactions.button.find(button => button.id == id);
         if (!button) return;
 
         try {
-            return await button.execute(interaction, client, user, guildMember, guild, channel);
+            log('User Action', `'${user.tag}' (${user.id}) used button '${id}'`, `green`);
+            await button.run(interaction);
         } catch (error) {
-            let errorResult = await reportError(client, user, error, 'Button', id, guild);
-            return interaction.reply(errorResult);
+            const errorEmbed = await reportError(client, user, error, 'Button Interaction', id);
+            return message.reply({ embeds: [errorEmbed] });
 		}
     },
 };

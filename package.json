@@ -1,24 +1,17 @@
 {
-  "name": "discord-bot",
+  "name": "discord-bot-template",
   "version": "1.0.0",
-  "description": "This repository contains the code for the Discord bot",
+  "description": "My Discord Bot template.",
   "main": "app.js",
   "scripts": {
-    "development": "SET NODE_ENVIRONMENT=development& node app.js",
-    "production": "SET NODE_ENVIRONMENT=production& node app.js"
+    "start": "node app.js"
   },
   "author": "goodbyepavlyi",
-  "license": "ISC",
+  "license": "GPL",
   "dependencies": {
-    "colors": "^1.4.0",
-    "cors": "^2.8.5",
-    "dayjs": "^1.11.2",
-    "discord.js": "^13.7.0",
-    "express": "^4.18.1",
-    "express-useragent": "^1.0.15",
-    "pretty-seconds": "^2.0.0",
-    "quick.db": "^7.1.3",
-    "statcord.js": "^3.4.2",
+    "chalk": "^4.1.2",
+    "discord.js": "^13.6.0",
+    "express": "^4.17.3",
     "topgg-autoposter": "^2.0.1"
   }
 }

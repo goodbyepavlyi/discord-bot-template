@@ -1,95 +1,103 @@
-/*
-    *LOGGING TO FILE
-*/
-require('./classes/LogToFile.js')('./logs/');
+const { start, log } = require(`./utils/logger.js`);
+start(`App`, `Connecting to WebSocket..`, `blue`);
 
-/*
-    *IMPORTING NODE CLASSES
-*/
-const fs = require('fs');
-const path = require('path');
-const { Client, Intents, Collection } = require('discord.js');
-
-/*
-    *CHECKING IF REQUIRED FILES EXIST
-*/
-if (!process.env.NODE_ENVIRONMENT) throw Error('NODE_ENVIRONMENT is undefined, refusing to start!')
-if (!fs.existsSync('./tokens.json') ) throw Error('File with tokens is missing!');
-if (!fs.existsSync('./config.json') ) throw Error('Config file is missing!');
-
-/*
-    *IMPORTING FILES
-*/
-const tokens = require('./tokens.json');
-
-/*
-    *INITIALIZING DISCORD.JS CLIENT
-*/
+const { Client, Intents, Collection } = require(`discord.js`);
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MEMBERS],
-    partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+    allowedMentions: {
+        parse: [ `users`, `roles` ],
+    },
+    presence: {
+        status: `invisible`,
+        activities: [{
+            name: `starting up..`,
+            type: `PLAYING`,
+        }],
+    },
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_PRESENCES,
+        Intents.FLAGS.DIRECT_MESSAGES,
+    ],
+    partials: [ `MESSAGE`, `CHANNEL` ],
 });
 
-client.data = {};
-client.cooldowns = new Map();
+//* Importing Config
+const config = require(`./config.js`);
+Object.keys(config).forEach(async (key) => client[key] = config[key]);
+
+//* Creating Wait Function
+client.wait = (time) => new Promise(resolve => setTimeout(resolve, time));
+
+//* Handlers
+client.interactions = {};
+
+const { readdirSync } = require(`fs`);
+const names = readdirSync(`./handlers/`).filter(file => file.endsWith(`.js`));
+names.forEach(name => {
+    require(`./handlers/${name}`)(client);
+});
+
 module.exports = client;
+client.login(client.discordToken);
 
-/*
-    *SEPARATE THE ACTIONS IN THE LOG
-*/
-console.log('', '');
+//* Web server
+const express = require(`express`);
+const path = require(`path`);
+const app = express();
 
-/*
-    *READING AND IMPORTING EVENT LISTENERS
-*/
-let eventFiles = fs.readdirSync('./events').filter(file => (path.extname(file) == '.js' && !file.startsWith('.')) );
-for (let file of eventFiles) {
-    let event = require(`./events/${file}`);
+app.use(express.json());
+app.use((req, res, next) => {
+    res.setHeader(`Access-Control-Allow-Origin`, `*`);
+    res.setHeader(`Access-Control-Allow-Methods`, `GET, POST, PUT, DELETE, PATCH`);
+    res.setHeader(`Access-Control-Allow-Headers`, `Content-Type, authorization `);
+    res.setHeader(`Access-Control-Allow-Credentials`, true);
 
-    if (event.once) client.once(event.name, (...args) => event.execute(...args));
-    else client.on(event.name, (...args) => event.execute(...args));
+    next();
+});
 
-    console.log('Event', `${event.name} loaded`);
-};
+app.get(`*`, (req, res, next) => {
+    if (!client.user) return res.status(500).send({
+        status: 500,
+        message: `The client is not available`,
+    });
 
-/*
-    *SEPARATE THE ACTIONS IN THE LOG
-*/
-console.log('', '');
+    next();
+});
 
-/*
-    *READING AND IMPORTING COMMANDS
-*/
-client.commands = new Collection();
-for (let file of fs.readdirSync('./commands').filter(file => (path.extname(file) === '.js' && !file.startsWith('.')))) {
-    let command = require(`./commands/${file}`);
-    client.commands.set(command.data.name, command);
+app.get(`*`, (req, res, next) => {
+    const token = client.serverToken;
+    const userToken = req.headers.authorization;
 
-    console.log('Command', `${command.data.name} loaded`);
-}
-/*
-    *SEPARATE THE ACTIONS IN THE LOG
-*/
-console.log('', '');
+    if (token != userToken) return res.status(403).send({
+        status: 403,
+        message: `The token you provided does not match!`,
+    });
 
-/*
-    *READING AND IMPORTING BUTTONS
-*/
-client.interactionButtons = new Collection();
-let buttonFiles = fs.readdirSync('./buttons').filter(file => (path.extname(file) === '.js' && !file.startsWith('.')) );
-for (let file of buttonFiles) {
-    let button = require(`./buttons/${file}`);
-    client.interactionButtons.set(button.id, button);
+    next();
+});
 
-    console.log('Button', `${button.id} loaded`);
-};
+const { walk } = require(`./utils/filesystem.js`);
+walk(path.join(__dirname, `api`)).forEach(file => {
+    const relativePath = file.replace(path.join(__dirname, `routes`), ``);
+    const routePath = relativePath.split(`\\`).join("/").replace(".js", ``);
+    const routes = require(file);
 
-/*
-    *SEPARATE THE ACTIONS IN THE LOG
-*/
-console.log('', '');
+    routes.forEach(route => {
+        if (route.method) app[route.method](route.path ? route.path : routePath, route.run);
+    });
+});
 
-client.login(tokens[process.env.NODE_ENVIRONMENT].discord.token);
+app.get(`*`, (req, res) => {
+    res.status(404).json({
+        status: 404,
+        message: `You have entered an invalid route!`,
+    });
+});
 
-process.on('unhandledRejection', console.error);
-process.on('uncaughtException', console.error);
+app.listen(client.serverPort, (error) => {
+    if (error) log(`API`, JSON.stringify(error), `red`);
+
+    log(`API`, `Listening to http://localhost:${client.serverPort}`, `green`);
+});

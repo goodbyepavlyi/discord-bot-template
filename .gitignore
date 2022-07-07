@@ -105,3 +105,6 @@ dist
 
 # quick.db
 json.sqlite
+
+# Proprietary files
+config.js
