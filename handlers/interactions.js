@@ -9,6 +9,9 @@ module.exports = (client) => {
         const interaction = require(file);
 
         const type = interaction?.type;
-        if (type) (client.interactions[type] ??= new Collection()).set(type, interaction);
+        if (!type) return;
+
+        const identifier = interaction?.name || interaction?.id;
+        (client.interactions[type] ??= new Collection()).set(identifier, interaction);
     }
 };

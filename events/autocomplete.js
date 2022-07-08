@@ -1,6 +1,4 @@
 const { AutocompleteInteraction } = require('discord.js');
-const reportError = require('../utils/errorReporting.js');
-const { log } = require('../utils/logger.js');
 
 module.exports = {
     name: 'interactionCreate',

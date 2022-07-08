@@ -1,7 +1,7 @@
 const { start, log } = require(`./utils/logger.js`);
 start(`App`, `Connecting to WebSocket..`, `blue`);
 
-const { Client, Intents, Collection } = require(`discord.js`);
+const { Client, Intents } = require(`discord.js`);
 const client = new Client({
     allowedMentions: {
         parse: [ `users`, `roles` ],
@@ -30,16 +30,16 @@ Object.keys(config).forEach(async (key) => client[key] = config[key]);
 //* Creating Wait Function
 client.wait = (time) => new Promise(resolve => setTimeout(resolve, time));
 
+module.exports = client;
+
 //* Handlers
 client.interactions = {};
-
 const { readdirSync } = require(`fs`);
 const names = readdirSync(`./handlers/`).filter(file => file.endsWith(`.js`));
 names.forEach(name => {
     require(`./handlers/${name}`)(client);
 });
 
-module.exports = client;
 client.login(client.discordToken);
 
 //* Web server
