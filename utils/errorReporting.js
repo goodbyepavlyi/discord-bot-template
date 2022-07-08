@@ -1,6 +1,6 @@
-const { MessageEmbed, Client, User, Guild, Message } = require('discord.js');
-const { ERROR_TITLE, ERROR_DESCRIPTION } = require('../assets/messages.js');
-const { log } = require('./logger');
+const { MessageEmbed, Client, User, Message, MessageAttachment } = require(`discord.js`);
+const { ERROR_TITLE, ERROR_DESCRIPTION } = require(`../assets/messages.js`);
+const { log } = require(`./logger`);
 
 /**
  * @param {Client} client 
@@ -21,9 +21,9 @@ function createEmbed(client, executor, error, action, actionName, reportError = 
             .setTitle(ERROR_TITLE.replaceAll(`{id}`, id))
             .setDescription(ERROR_DESCRIPTION);
     
-        log('Error', error, 'red');
+        log(`Error`, error, `red`);
     
-        if (reportError) await report(client, executor, error, id, action, actionName).catch(() => log('Error', 'Failed to report error to Discord Server!', 'red'));
+        if (reportError) await report(client, executor, error, id, action, actionName).catch((error) => log(`Error`, `Failed to report error to Discord Server! ${error.stack}`, `red`));
         resolve(errorEmbed);
     })
 };
@@ -46,17 +46,16 @@ function report(client, executor, error, id, action, actionName) {
                 iconURL: executor.displayAvatarURL()
             })
             .setTitle(`Error #${id}`)
-            .addField('Action', action, true)
-            .addField('Name', actionName, true)
-            .addField('Executor', `${executor.tag} \`${executor.id}\``)
-            .setThumbnail(executor.avatarURL({ dynamic: true }))
+            .addField(`Action`, `\`${action}\``, true)
+            .addField(`Name`, `\`${actionName}\``, true)
+            .addField(`Executor`, `**${executor.tag}** \`${executor.id}\``)
             .setTimestamp()
-            .setDescription(error.stack.length >= 4096 ? `\`\`\`${error}\`\`\`` : `\`\`\`${error.stack}\`\`\``);
     
         const server = await client.guilds.fetch(client.supportServerId);
         const channel = await server.channels.fetch(client.supportServerChannels.botErrors);
     
-        resolve(channel.send({ embeds: [reportEmbed] }));
+        const errorFile = new MessageAttachment(Buffer.from(error.stack), `stack.txt`);
+        resolve(channel.send({ embeds: [reportEmbed], files: [errorFile] }));
     })
 };
 
